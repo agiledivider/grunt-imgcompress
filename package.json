@@ -1,0 +1,50 @@
+{
+	"name": "imgcompress",
+	"description": "Batch Minify PNG and JPEG images",
+	"version": "0.1.0",
+	"homepage": "https://github.com/qiu8310/imgcompress",
+	"author": {
+		"name": "zhongleiqiu@gmail.com",
+		"url": "http://qiu8310.github.io/blog/"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/qiu8310/imgcompress"
+	},
+	"bugs": {
+		"url": "https://github.com/qiu8310/imgcompress/issues"
+	},
+	"licenses": "MIT",
+	"main": "Gruntfile.js",
+	"engines": {
+		"node": ">=0.8.0"
+	},
+	"scripts": {
+		"test": "grunt test"
+	},
+	"dependencies": {
+		"filesize": "~1.7.9",
+		"jpegtran-bin": "~0.1.0",
+		"optipng-bin": "~0.2.0"
+	},
+	"devDependencies": {
+		"grunt-contrib-clean": "~0.4.0",
+		"grunt-contrib-coffee": "~0.7.0",
+		"grunt-contrib-internal": "~0.4.2",
+		"grunt": "~0.4.0"
+	},
+	"keywords": [
+		"batch",
+		"auto",
+		"image",
+		"img",
+		"minify",
+		"compress",
+		"crush"
+		"png",
+		"jpg",
+		"jpeg"
+	],
+	"contributors": [
+	]
+}
