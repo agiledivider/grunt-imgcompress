@@ -1,6 +1,6 @@
 # imgcompress
 
-> Batch Minify PNG and JPEG images
+> Batch Minify PNG and JPEG images, Ideas come from [grunt-contrib-imagemin](https://github.com/gruntjs/grunt-contrib-imagemin)
 
 
 _Note that this is not an official Grunt plugin release! If you want to use this in a project, please be sure to follow the instructions for installing development versions, as outlined in the [Installing Grunt](http://gruntjs.com/installing-grunt) guide._
