@@ -1,6 +1,9 @@
-#grunt-imgcompress
+# imgcompress
 
->Batch Minify PNG and JPEG images, Ideas come from [grunt-contrib-imagemin](https://github.com/gruntjs/grunt-contrib-imagemin)
+> Batch Minify PNG and JPEG images
+
+
+_Note that this is not an official Grunt plugin release! If you want to use this in a project, please be sure to follow the instructions for installing development versions, as outlined in the [Installing Grunt](http://gruntjs.com/installing-grunt) guide._
 
 
 ## Getting Started
@@ -9,17 +12,17 @@ This plugin requires Grunt `~0.4.0`
 If you haven't used [Grunt](http://gruntjs.com/) before, be sure to check out the [Getting Started](http://gruntjs.com/getting-started) guide, as it explains how to create a [Gruntfile](http://gruntjs.com/sample-gruntfile) as well as install and use Grunt plugins. Once you're familiar with that process, you may install this plugin with this command:
 
 ```shell
-npm install grunt-imgcompress --save-dev
+npm install imgcompress --save-dev
 ```
 
 Once the plugin has been installed, it may be enabled inside your Gruntfile with this line of JavaScript:
 
 ```js
-grunt.loadNpmTasks('grunt-imgcompress');
+grunt.loadNpmTasks('imgcompress');
 ```
 
 
-## Imagemin task
+## imgcompress task
 _Run this task with the `grunt imgcompress` command._
 
 Task targets, files and options may be specified according to the grunt [Configuring tasks](http://gruntjs.com/configuring-tasks) guide.
@@ -81,7 +84,7 @@ recurse sub directory
 
 #### ignores
 Type: `string` or `array`
-Default: `true`
+Default: `null`
 
 ignores these files that match this, files that are not png, jpg or jpeg will be ignored automatic <br>
 use [grunt.util.match](http://gruntjs.com/api/grunt.file#grunt.file.match) with the options {matchBase: true}
@@ -112,3 +115,14 @@ grunt.initConfig
 
 grunt.registerTask('default', ['imgcompress']);
 ```
+
+
+## Release History
+
+ * 2013-06-29   v0.1.0   Initial release.
+
+---
+
+Task submitted by [ZhongleiQiu](http://github.com/qiu8310)
+
+*This file was generated on Sat Jun 29 2013 01:06:51.*

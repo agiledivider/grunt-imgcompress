@@ -50,4 +50,4 @@ module.exports = (grunt) ->
 
 	grunt.registerTask 'init', 'coffee'
 	grunt.registerTask 'test', ['clean', 'imgcompress:dist']
-	grunt.registerTask 'default', ['test', 'build-contrib']
+	grunt.registerTask 'default', ['test']
