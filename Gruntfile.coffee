@@ -45,7 +45,6 @@ module.exports = (grunt) ->
 
 	grunt.loadTasks('tasks')
 	grunt.loadNpmTasks('grunt-contrib-clean')
-	grunt.loadNpmTasks('grunt-contrib-nodeunit')
 	grunt.loadNpmTasks('grunt-contrib-coffee')
 	grunt.loadNpmTasks('grunt-contrib-internal')
 

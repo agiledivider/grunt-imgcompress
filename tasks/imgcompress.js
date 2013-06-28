@@ -6,7 +6,7 @@ module.exports = function(grunt) {
   filesize = require('filesize');
   pngPath = require('optipng-bin').path;
   jpgPath = require('jpegtran-bin').path;
-  grunt.registerMultiTask('imgcompress', 'Minify PNG and JPEG images', function() {
+  grunt.registerMultiTask('imgcompress', 'Batch Minify PNG and JPEG images', function() {
     var childs, files, ignores, jpgArgs, optimize, options, pngArgs, pushFile, recurse;
     options = this.options();
     recurse = typeof options.recurse === "undefined" ? true : !!options.recurse;
@@ -25,10 +25,10 @@ module.exports = function(grunt) {
     pushFile = function(src, dest) {
       var ext, flag;
       ext = path.extname(src);
-      if (['.png', '.jpg', '.jpeg'].indexOf(ext) < 0 || ignores && !!grunt.file.match({
+      if (['.png', '.jpg', '.jpeg'].indexOf(ext) < 0 || ignores && grunt.file.isMatch({
         matchBase: true
-      }, ignores, src).length) {
-        return;
+      }, ignores, src)) {
+        return null;
       }
       dest = dest.replace(new RegExp('\\\\', 'g'), '/');
       flag = true;
@@ -82,7 +82,7 @@ module.exports = function(grunt) {
       }
     });
     optimize = function(src, dest, next) {
-      var childProcessResult, cp, ext, originalSize;
+      var ch, childProcessResult, ext, originalSize;
       ext = path.extname(src);
       originalSize = fs.statSync(src).size;
       if (!grunt.file.exists(path.dirname(dest))) {
@@ -102,21 +102,21 @@ module.exports = function(grunt) {
         grunt.file["delete"](dest);
       }
       if (ext === '.png') {
-        cp = grunt.util.spawn({
+        ch = grunt.util.spawn({
           cmd: pngPath,
           args: pngArgs.concat(['-out', dest, src])
         }, childProcessResult);
       } else if (ext === '.jpg' || ext === '.jpeg') {
-        cp = grunt.util.spawn({
+        ch = grunt.util.spawn({
           cmd: jpgPath,
           args: jpgArgs.concat(['-outfile', dest, src])
         }, childProcessResult);
       } else {
         next();
       }
-      if (cp && grunt.option('verbose')) {
-        cp.stdout.pipe(process.stdout);
-        return cp.stderr.pipe(process.stderr);
+      if (ch && grunt.option('verbose')) {
+        ch.stdout.pipe(process.stdout);
+        return ch.stderr.pipe(process.stderr);
       }
     };
     grunt.util.async.forEachLimit(files, childs, function(file, next) {

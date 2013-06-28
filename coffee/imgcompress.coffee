@@ -6,7 +6,7 @@ module.exports = (grunt) ->
 	pngPath = require('optipng-bin').path
 	jpgPath = require('jpegtran-bin').path
 
-	grunt.registerMultiTask 'imgcompress', 'Minify PNG and JPEG images', () -> 
+	grunt.registerMultiTask 'imgcompress', 'Batch Minify PNG and JPEG images', () -> 
 		options = this.options()
 
 		recurse = if typeof options.recurse == "undefined" then true else !!options.recurse  # recurse sub dir
@@ -28,7 +28,7 @@ module.exports = (grunt) ->
 		files = []
 		pushFile = (src, dest) ->
 			ext = path.extname(src)
-			return if ['.png','.jpg','.jpeg'].indexOf(ext) < 0 || ignores and !!grunt.file.match({matchBase: true}, ignores, src ).length
+			return null if ['.png','.jpg','.jpeg'].indexOf(ext) < 0 || ignores and grunt.file.isMatch({matchBase: true}, ignores, src )
 			
 			dest = dest.replace(new RegExp('\\\\', 'g'),'/')
 			flag = true
@@ -92,21 +92,21 @@ module.exports = (grunt) ->
 
 			# 多进程处理
 			if ext == '.png'
-				cp = grunt.util.spawn({
+				ch = grunt.util.spawn({
 					cmd: pngPath,
 					args: pngArgs.concat(['-out', dest, src])
 				}, childProcessResult)
 			else if ext == '.jpg' or ext == '.jpeg'
-				cp = grunt.util.spawn({
+				ch = grunt.util.spawn({
 					cmd: jpgPath,
 					args: jpgArgs.concat(['-outfile', dest, src])
 				}, childProcessResult)
 			else
 				next()
 
-			if cp and grunt.option('verbose')
-				cp.stdout.pipe(process.stdout);
-				cp.stderr.pipe(process.stderr);
+			if ch and grunt.option('verbose')
+				ch.stdout.pipe(process.stdout);
+				ch.stderr.pipe(process.stderr);
        
 
 		grunt.util.async.forEachLimit(files, childs, (file, next) ->
