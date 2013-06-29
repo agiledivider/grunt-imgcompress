@@ -40,7 +40,7 @@ module.exports = (grunt) ->
 				bare: true
 			build:
 				files:
-					'tasks/<%= pkg.name %>.js': 'coffee/<%= pkg.name %>.coffee'
+					'tasks/<%= pkg.alias %>.js': 'coffee/<%= pkg.alias %>.coffee'
 
 
 	grunt.loadTasks('tasks')
