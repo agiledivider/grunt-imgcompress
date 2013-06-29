@@ -23,7 +23,7 @@ module.exports = function(grunt) {
     ignores = grunt.util.kindOf(options.ignores) === 'array' && options.ignores.length > 0 ? options.ignores : false;
     files = [];
     pushFile = function(src, dest) {
-      var ext, flag;
+      var ext, file, flag, i, _i, _ref;
       ext = path.extname(src);
       if (['.png', '.jpg', '.jpeg'].indexOf(ext) < 0 || ignores && grunt.file.isMatch({
         matchBase: true
@@ -32,7 +32,8 @@ module.exports = function(grunt) {
       }
       dest = dest.replace(new RegExp('\\\\', 'g'), '/');
       flag = true;
-      files.forEach(function(file, i) {
+      for (i = _i = 0, _ref = files.length - 1; _i <= _ref; i = _i += 1) {
+        file = files[i];
         if (file['dest'] === dest && flag) {
           if (file['src'] !== src) {
             if (options.duplication === 'error') {
@@ -43,9 +44,10 @@ module.exports = function(grunt) {
               files[i]['dest'] = dest;
             }
           }
-          return flag = false;
+          flag = false;
+          break;
         }
-      });
+      }
       if (flag) {
         return files.push({
           src: src,
@@ -54,12 +56,8 @@ module.exports = function(grunt) {
       }
     };
     this.files.forEach(function(file) {
-      var dest, destDir, isDestDir, src;
-      src = file.src[0];
+      var dest, destDir, isDestDir;
       dest = file.dest;
-      if (!grunt.file.exists(src)) {
-        grunt.log.error('src path(' + src.red + ') not exists');
-      }
       destDir = path.dirname(dest);
       if (!grunt.file.exists(destDir)) {
         grunt.file.mkdir(destDir);
@@ -68,18 +66,20 @@ module.exports = function(grunt) {
       if (isDestDir && !grunt.file.isDir(dest)) {
         grunt.file.mkdir(dest);
       }
-      if (grunt.file.isDir(src) && isDestDir) {
-        return grunt.file.recurse(src, function(abspath, rootdir, subdir, filename) {
-          if (recurse || !subdir) {
-            return pushFile(abspath, path.join(dest, subdir, filename));
+      return file.src.forEach(function(src, i) {
+        if (grunt.file.isDir(src) && isDestDir) {
+          return grunt.file.recurse(src, function(abspath, rootdir, subdir, filename) {
+            if (recurse || !subdir) {
+              return pushFile(abspath, path.join(dest, subdir, filename));
+            }
+          });
+        } else if (grunt.file.isFile(src)) {
+          if (isDestDir) {
+            dest = path.join(dest, path.basename(src));
           }
-        });
-      } else if (grunt.file.isFile(src)) {
-        if (isDestDir) {
-          dest = path.join(dest, path.basename(src));
+          return pushFile(src, dest);
         }
-        return pushFile(src, dest);
-      }
+      });
     });
     optimize = function(src, dest, next) {
       var ch, childProcessResult, ext, originalSize;

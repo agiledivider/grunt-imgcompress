@@ -22,8 +22,8 @@ module.exports = (grunt) ->
 			dist:
 				files: [
 					#'tmp/test.png': 'test/test.png'
-					'tmp/test.jpg': 'test/test.jpg'
-					'tmp': 'test'
+					'tmp/test.jpg': 'imgs/test/test.jpg'
+					'tmp': ['imgs/test', 'imgs/test_1']
 				]
 			dist2:
 				files: [
@@ -50,4 +50,4 @@ module.exports = (grunt) ->
 
 	grunt.registerTask 'init', 'coffee'
 	grunt.registerTask 'test', ['clean', 'imgcompress:dist']
-	grunt.registerTask 'default', ['test']
+	grunt.registerTask 'default', ['test', 'build-contrib']

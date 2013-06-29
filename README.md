@@ -22,7 +22,9 @@ grunt.loadNpmTasks('imgcompress');
 ```
 
 
-## imgcompress task
+
+
+## Imgcompress task
 _Run this task with the `grunt imgcompress` command._
 
 Task targets, files and options may be specified according to the grunt [Configuring tasks](http://gruntjs.com/configuring-tasks) guide.
@@ -88,34 +90,38 @@ Default: `null`
 
 ignores these files that match this, files that are not png, jpg or jpeg will be ignored automatic <br>
 use [grunt.util.match](http://gruntjs.com/api/grunt.file#grunt.file.match) with the options {matchBase: true}
+#### Example config
 
-
-### Example config
-
-```coffee
-grunt.initConfig
-	imgcompress:
-		options:
+```javascript
+grunt.initConfig ({
+	imgcompress: {
+		options: {
 			optimizationLevel: 3
 			progressive: true 	
 			duplication: 'override'
 			childs: 30		
 			recurse: false 
 			ignores: ['*.png']
+		}
+			
 
-		dist:
-			files: [
-				'tmp/test.jpg': 'test/test.jpg'
-				'tmp': 'test'
-			]
-		dist2:
+		dist: {
+			files: {
+				'tmp/bar.jpg': 'imgs/test/test.jpg',
+				'tmp': ['imgs/test', 'imgs/test_1']
+			}
+		}
+			
+		dist2: {
 			files: [
 				{ src: 'test', dest: 'tmp' }
 			]
+		}
+	}	
+})
 
-grunt.registerTask('default', ['imgcompress']);
+grunt.registerTask('default', ['imgcompress:dist']);
 ```
-
 
 ## Release History
 
@@ -125,4 +131,4 @@ grunt.registerTask('default', ['imgcompress']);
 
 Task submitted by [ZhongleiQiu](http://github.com/qiu8310)
 
-*This file was generated on Sat Jun 29 2013 01:06:51.*
+*This file was generated on Sat Jun 29 2013 10:29:41.*

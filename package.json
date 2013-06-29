@@ -1,6 +1,6 @@
 {
 	"name": "imgcompress",
-	"description": "Batch Minify PNG and JPEG images",
+	"description": "Batch Minify PNG and JPEG images, Ideas come from [grunt-contrib-imagemin](https://github.com/gruntjs/grunt-contrib-imagemin)",
 	"version": "0.1.0",
 	"homepage": "https://github.com/qiu8310/grunt-imgcompress",
 	"author": {

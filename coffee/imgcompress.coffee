@@ -34,7 +34,8 @@ module.exports = (grunt) ->
 			flag = true
 
 			# avoid duplication file
-			files.forEach ( file, i ) ->
+			for i in [0..files.length-1] by 1
+				file = files[i]
 				if file['dest'] == dest and flag
 					if file['src'] != src # if `src` is same too then it is not duplication
 						if options.duplication == 'error'
@@ -44,33 +45,31 @@ module.exports = (grunt) ->
 							files[i]['src'] = src
 							files[i]['dest'] = dest
 					flag = false
+					break;
 			files.push({src:src, dest:dest}) if flag
 			
 
 		# pre process files
 		this.files.forEach ( file ) -> 
-			src = file.src[0]
 			dest = file.dest
 
-			# 源文件不存在
-			grunt.log.error('src path('+src.red+') not exists') if !grunt.file.exists(src)
-
-			# 创建目标文件夹
+			# create dest dir
 			destDir = path.dirname(dest)
 			grunt.file.mkdir(destDir) if !grunt.file.exists(destDir)
 
 			isDestDir = grunt.file.isDir(dest) or path.basename(dest).indexOf('.') == -1
 			grunt.file.mkdir(dest) if isDestDir and !grunt.file.isDir(dest)
 
-			# 分类处理
-			if grunt.file.isDir(src) and isDestDir
-				grunt.file.recurse(src, (abspath, rootdir, subdir, filename)->
-					pushFile(abspath, path.join(dest, subdir, filename)) if recurse or !subdir
-				)
-			else if grunt.file.isFile(src)
-				dest = path.join(dest, path.basename(src)) if isDestDir
-				pushFile(src, dest)
 
+			file.src.forEach (src, i) ->
+				# process file or dir
+				if grunt.file.isDir(src) and isDestDir
+					grunt.file.recurse(src, (abspath, rootdir, subdir, filename)->
+						pushFile(abspath, path.join(dest, subdir, filename)) if recurse or !subdir
+					)
+				else if grunt.file.isFile(src)
+					dest = path.join(dest, path.basename(src)) if isDestDir
+					pushFile(src, dest)
 
 		# img optimize
 		optimize = (src, dest, next) -> 
@@ -78,7 +77,7 @@ module.exports = (grunt) ->
 			originalSize = fs.statSync(src).size
 
 			grunt.file.mkdir(path.dirname(dest)) if !grunt.file.exists(path.dirname(dest))
-			# 子进程处理结果
+
 			childProcessResult = (err, result, code) ->
 				grunt.log.writeln(err) if err
 				
@@ -90,7 +89,7 @@ module.exports = (grunt) ->
 
 			grunt.file.delete(dest) if src != dest and grunt.file.exists(dest)
 
-			# 多进程处理
+			# mutil process
 			if ext == '.png'
 				ch = grunt.util.spawn({
 					cmd: pngPath,
