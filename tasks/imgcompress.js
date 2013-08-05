@@ -1,11 +1,12 @@
 module.exports = function(grunt) {
-  var childProcess, filesize, fs, jpgPath, path, pngPath;
+  var childProcess, filesize, fs, jpgPath, path, pngPath, totalSaved;
   path = require('path');
   fs = require('fs');
   childProcess = require('child_process');
   filesize = require('filesize');
   pngPath = require('optipng-bin').path;
   jpgPath = require('jpegtran-bin').path;
+  totalSaved = 0;
   grunt.registerMultiTask('imgcompress', 'Batch Minify PNG and JPEG images', function() {
     var childs, files, ignores, jpgArgs, optimize, options, pngArgs, pushFile, recurse;
     options = this.options();
@@ -48,7 +49,17 @@ module.exports = function(grunt) {
           break;
         }
       }
-      if (flag) {
+      var srcStat, destStat;
+      var recreateCachedImage = true;
+
+      srcStat = fs.statSync(src);
+      if (fs.existsSync(dest)) {
+        destStat = fs.statSync(dest);
+      }
+
+      recreateCachedImage = !destStat || srcStat.mtime > destStat.mtime || grunt.cli.options.force === true;
+      
+      if (flag && recreateCachedImage) {
         return files.push({
           src: src,
           dest: dest
@@ -70,7 +81,7 @@ module.exports = function(grunt) {
         if (grunt.file.isDir(src) && isDestDir) {
           return grunt.file.recurse(src, function(abspath, rootdir, subdir, filename) {
             if (recurse || !subdir) {
-              return pushFile(abspath, path.join(dest, subdir, filename));
+              return pushFile(abspath, path.join(dest, subdir || '', filename));
             }
           });
         } else if (grunt.file.isFile(src)) {
