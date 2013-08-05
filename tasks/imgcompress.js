@@ -106,7 +106,7 @@ module.exports = function(grunt) {
         }
         saved = originalSize - fs.statSync(dest).size;
         savedMsg = result.stderr.indexOf('already optimized') !== -1 || saved < 10 ? 'already optimized' : 'saved ' + filesize(saved);
-        grunt.log.writeln('✔ '.green + src + (' (' + savedMsg + ')').grey);
+        grunt.log.writeln('✔ '.green + src + (' (' + savedMsg + ')' + ' Total: ' + filesize(totalSaved)).grey);
         return next();
       };
       if (src !== dest && grunt.file.exists(dest)) {
