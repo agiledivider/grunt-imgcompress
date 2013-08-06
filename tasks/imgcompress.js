@@ -26,7 +26,7 @@ module.exports = function(grunt) {
     pushFile = function(src, dest) {
       var ext, file, flag, i, _i, _ref;
       ext = path.extname(src);
-      if (['.png', '.jpg', '.jpeg'].indexOf(ext) < 0 || ignores && grunt.file.isMatch({
+      if (['.png', '.jpg', '.jpeg', '.gif'].indexOf(ext) < 0 || ignores && grunt.file.isMatch({
         matchBase: true
       }, ignores, src)) {
         return null;
@@ -114,6 +114,11 @@ module.exports = function(grunt) {
         grunt.file["delete"](dest);
       }
       if (ext === '.png') {
+        ch = grunt.util.spawn({
+          cmd: pngPath,
+          args: pngArgs.concat(['-out', dest, src])
+        }, childProcessResult);
+      } else if (ext === '.gif') {
         ch = grunt.util.spawn({
           cmd: pngPath,
           args: pngArgs.concat(['-out', dest, src])
