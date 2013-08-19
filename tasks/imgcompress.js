@@ -100,6 +100,7 @@ module.exports = function(grunt) {
       originalSize = fs.statSync(src).size;
       if (skipCompress) {
           grunt.file.copy(src, dest);
+          return;
       }
       if (!grunt.file.exists(path.dirname(dest))) {
         grunt.file.mkdir(path.dirname(dest));
