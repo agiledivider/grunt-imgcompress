@@ -24,12 +24,12 @@ module.exports = function(grunt) {
     ignores = grunt.util.kindOf(options.ignores) === 'array' && options.ignores.length > 0 ? options.ignores : false;
     files = [];
     pushFile = function(src, dest) {
-      var ext, file, flag, i, _i, _ref,skipCompress=false;
+      var ext, file, flag, i, _i, _ref;
       ext = path.extname(src);
       if (['.png', '.jpg', '.jpeg', '.gif'].indexOf(ext) < 0 || ignores && grunt.file.isMatch({
         matchBase: true
       }, ignores, src)) {
-        skipCompress = true;
+        return null;
       }
       dest = dest.replace(new RegExp('\\\\', 'g'), '/');
       flag = true;
@@ -43,7 +43,6 @@ module.exports = function(grunt) {
               grunt.log.warn('src: ' + files[i]['src'].red + ', dest: ' + dest.red + ' is override by src: ' + src.red);
               files[i]['src'] = src;
               files[i]['dest'] = dest;
-              files[i]['skipCompress'] = skipCompress;
             }
           }
           flag = false;
@@ -59,12 +58,11 @@ module.exports = function(grunt) {
       }
 
       recreateCachedImage = !destStat || srcStat.mtime > destStat.mtime || grunt.cli.options.force === true;
-
+      
       if (flag && recreateCachedImage) {
         return files.push({
           src: src,
-          dest: dest,
-          skipCompress: skipCompress
+          dest: dest
         });
       }
     };
@@ -94,14 +92,10 @@ module.exports = function(grunt) {
         }
       });
     });
-    optimize = function(src, dest, next, skipCompress) {
+    optimize = function(src, dest, next) {
       var ch, childProcessResult, ext, originalSize;
       ext = path.extname(src);
       originalSize = fs.statSync(src).size;
-      if (skipCompress) {
-          grunt.file.copy(src, dest);
-          return;
-      }
       if (!grunt.file.exists(path.dirname(dest))) {
         grunt.file.mkdir(path.dirname(dest));
       }
@@ -129,7 +123,6 @@ module.exports = function(grunt) {
           cmd: pngPath,
           args: pngArgs.concat(['-out', dest, src])
         }, childProcessResult);
-        grunt.log.writeln
       } else if (ext === '.jpg' || ext === '.jpeg') {
         ch = grunt.util.spawn({
           cmd: jpgPath,
@@ -145,7 +138,7 @@ module.exports = function(grunt) {
     };
     grunt.util.async.forEachLimit(files, childs, function(file, next) {
       grunt.verbose.writeflags(file, 'Transform');
-      return optimize(file.src, file.dest, next, file.skipCompress);
+      return optimize(file.src, file.dest, next);
     }, this.async());
   });
 };
