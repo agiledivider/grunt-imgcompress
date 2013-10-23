@@ -128,7 +128,6 @@ module.exports = function(grunt) {
           cmd: pngPath,
           args: pngArgs.concat(['-out', dest, src])
         }, childProcessResult);
-        grunt.log.writeln
       } else if (ext === '.ico') {
           grunt.file.copy(src, dest);
       } else if (ext === '.jpg' || ext === '.jpeg') {
