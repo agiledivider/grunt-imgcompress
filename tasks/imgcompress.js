@@ -24,13 +24,18 @@ module.exports = function(grunt) {
     ignores = grunt.util.kindOf(options.ignores) === 'array' && options.ignores.length > 0 ? options.ignores : false;
     files = [];
     pushFile = function(src, dest) {
-      var ext, file, flag, i, _i, _ref,skipCompress=false;
+      var ext, file, flag, i, _i, _ref,skipCompress=false,skipCopy=false;
       ext = path.extname(src);
+
       if (['.png', '.jpg', '.jpeg', '.gif'].indexOf(ext) < 0 || ignores && grunt.file.isMatch({
         matchBase: true
       }, ignores, src)) {
         skipCompress = true;
       }
+      if (options.copyIgnores && grunt.file.isMatch({matchBase: true}, options.copyIgnores, src)) {
+        skipCopy = true;
+      }
+
       dest = dest.replace(new RegExp('\\\\', 'g'), '/');
       flag = true;
       for (i = _i = 0, _ref = files.length - 1; _i <= _ref; i = _i += 1) {
@@ -44,12 +49,14 @@ module.exports = function(grunt) {
               files[i]['src'] = src;
               files[i]['dest'] = dest;
               files[i]['skipCompress'] = skipCompress;
+              files[i]['skipCopy'] = skipCopy;
             }
           }
           flag = false;
           break;
         }
       }
+
       var srcStat, destStat;
       var recreateCachedImage = true;
 
@@ -64,7 +71,8 @@ module.exports = function(grunt) {
         return files.push({
           src: src,
           dest: dest,
-          skipCompress: skipCompress
+          skipCompress: skipCompress,
+          skipCopy: skipCopy
         });
       }
     };
@@ -94,10 +102,13 @@ module.exports = function(grunt) {
         }
       });
     });
-    optimize = function(src, dest, next, skipCompress) {
+    optimize = function(src, dest, next, skipCompress, skipCopy) {
       var ch, childProcessResult, ext, originalSize;
       ext = path.extname(src);
       originalSize = fs.statSync(src).size;
+      if (skipCopy) {
+          return;
+      }
       if (skipCompress) {
           grunt.file.copy(src, dest);
       }
@@ -128,6 +139,7 @@ module.exports = function(grunt) {
           cmd: pngPath,
           args: pngArgs.concat(['-out', dest, src])
         }, childProcessResult);
+        console.log(src);
       } else if (ext === '.ico') {
           grunt.file.copy(src, dest);
       } else if (ext === '.jpg' || ext === '.jpeg') {
@@ -143,9 +155,9 @@ module.exports = function(grunt) {
         return ch.stderr.pipe(process.stderr);
       }
     };
-    grunt.util.async.forEachLimit(files, childs, function(file, next) {
+    grunt.util.async.forEach(files, function(file, next) {
       grunt.verbose.writeflags(file, 'Transform');
-      return optimize(file.src, file.dest, next, file.skipCompress);
+      return optimize(file.src, file.dest, next, file.skipCompress, file.skipCopy);
     }, this.async());
   });
 };
